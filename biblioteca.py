@@ -1,21 +1,73 @@
+import csv
+
+
 def carica_da_file(file_path):
-    """Carica i libri dal file"""
-    # TODO
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            row1 = next(reader)
+            n_sezioni = int(row1[0])
+            biblioteca = [[]for _ in range(n_sezioni + 1)]
+            for row in reader:
+                titolo = row[0]
+                autore = row[1]
+                anno = int(row[2])
+                pagine = int(row[3])
+                sezione = int(row[4])
+                libro = [titolo, autore, anno, pagine, sezione]
+                biblioteca[sezione].append(libro)
+    except FileNotFoundError:
+        return None
+    return biblioteca
 
 
 def aggiungi_libro(biblioteca, titolo, autore, anno, pagine, sezione, file_path):
-    """Aggiunge un libro nella biblioteca"""
-    # TODO
+    if sezione >= len(biblioteca) or sezione < 0:
+        return None
+
+    for sezione_1 in biblioteca:
+        for libro in sezione_1:
+            if libro[0] == titolo:
+                return None
+
+    nuovo_libro = [titolo, autore, anno, pagine, sezione]
+    biblioteca[sezione].append(nuovo_libro)
+
+    try:
+        with open(file_path, 'a', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(nuovo_libro)
+    except Exception:
+        return None
 
 
 def cerca_libro(biblioteca, titolo):
-    """Cerca un libro nella biblioteca dato il titolo"""
-    # TODO
+    for sezione in biblioteca:
+        for libro in sezione:
+            if libro[0].lower() == titolo.lower():
+                return f'{libro[0]}, {libro[1]}, {libro[2]}, {libro[3]}, {libro[4]}'
+
+    return None
+
 
 
 def elenco_libri_sezione_per_titolo(biblioteca, sezione):
-    """Ordina i titoli di una data sezione della biblioteca in ordine alfabetico"""
-    # TODO
+    if sezione >= len(biblioteca) or sezione < 0:
+        return None
+
+    if not biblioteca[sezione]:
+        return []
+
+    titoli = []
+
+    for libro in biblioteca[sezione]:
+        titoli.append(libro[0])
+
+    titoli_ordinati = sorted(titoli)
+
+    return titoli_ordinati
+
+
 
 
 def main():
@@ -97,4 +149,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
